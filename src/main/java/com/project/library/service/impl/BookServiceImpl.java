@@ -1,10 +1,12 @@
 package com.project.library.service.impl;
 
+import com.project.library.exception.BookArgumentsViolationException;
 import com.project.library.exception.BookNotFoundException;
 import com.project.library.exception.ExceptionMessages;
 import com.project.library.model.entity.Book;
 import com.project.library.repository.BookRepository;
 import com.project.library.service.BookService;
+import com.sun.jdi.connect.Connector;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,18 +31,13 @@ public class BookServiceImpl implements BookService {
         if (optionalBook.isPresent()) {
             return optionalBook.get();
         } else {
-            throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.toString());
+            throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.name());
         }
     }
 
     @Override
-    public Book getBookByAuthor(String author) {
-        Optional<Book> optionalBook = bookRepository.getBookByAuthor(author);
-        if (optionalBook.isPresent()) {
-            return optionalBook.get();
-        } else {
-            throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.toString());
-        }
+    public List<Book> getBookByAuthor(String author) {
+        return bookRepository.getBookByAuthor(author);
     }
 
     @Override
@@ -49,32 +46,27 @@ public class BookServiceImpl implements BookService {
         if (optionalBook.isPresent()) {
             return optionalBook.get();
         } else {
-            throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.toString());
+            throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.getText());
         }
     }
 
     @Override
-    public Book getBookByGenre(String genre) {
-        Optional<Book> optionalBook = bookRepository.getBookByGenre(genre);
-        if (optionalBook.isPresent()) {
-            return optionalBook.get();
-        } else {
-            throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.toString());
-        }
+    public List<Book> getBookByGenre(String genre) {
+        return bookRepository.getBookByGenre(genre);
     }
 
     @Override
     public List<Book> getBooksBySearch(String author, String title, String genre) {
-        final String finalAuthor = (author != null && author.isEmpty()) ? "Unknown" : author;
-        final String finalTitle = (title != null && title.isEmpty()) ? "Unknown" : title;
-        final String finalGenre = (genre != null && genre.isEmpty()) ? "Unknown" : genre;
+        final String finalAuthor = (author == null || author.isEmpty()) ? "Unknown" : author;
+        final String finalTitle = (title == null || title.isEmpty()) ? "Unknown" : title;
+        final String finalGenre = (genre == null || genre.isEmpty()) ? "Unknown" : genre;
 
         List<Book> allBooks = bookRepository.findAll();
 
         return allBooks.stream()
-                .filter(book -> (finalAuthor == null || finalAuthor.equals(book.getAuthor())) &&
-                        (finalTitle == null || finalTitle.equals(book.getTitle())) &&
-                        (finalGenre == null || finalGenre.equals(book.getGenre())))
+                .filter(book -> (finalAuthor.equals("Unknown") || finalAuthor.equals(book.getAuthor())) &&
+                        (finalTitle.equals("Unknown") || finalTitle.equals(book.getTitle())) &&
+                        (finalGenre.equals("Unknown") || finalGenre.equals(book.getGenre())))
                 .collect(Collectors.toList());
     }
 
@@ -83,6 +75,7 @@ public class BookServiceImpl implements BookService {
         Book tempBook = Book.builder()
                 .author(newBook.getAuthor())
                 .genre(newBook.getGenre())
+                .publicationYear(newBook.getPublicationYear())
                 .title(newBook.getTitle())
                 .ISBN(newBook.getISBN()).build();
         return bookRepository.save(tempBook);
@@ -91,16 +84,20 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book updateBook(Book updatedBook) {
         Book tempBook;
+        if (!checkISBN(updatedBook)) throw new BookArgumentsViolationException("" +
+                ExceptionMessages.BOOK_ISBN_NOT_UNIQUE.getText()
+        );
         if (bookRepository.existsById(updatedBook.getId())) {
             tempBook = Book.builder()
                     .id(updatedBook.getId())
                     .author(updatedBook.getAuthor())
+                    .publicationYear(updatedBook.getPublicationYear())
                     .genre(updatedBook.getGenre())
                     .title(updatedBook.getTitle())
                     .ISBN(updatedBook.getISBN()).build();
             return bookRepository.save(tempBook);
         } else {
-            throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.toString());
+            throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.getText());
         }
     }
 
@@ -109,7 +106,17 @@ public class BookServiceImpl implements BookService {
         if (bookRepository.existsById(id)) {
             bookRepository.deleteById(id);
         } else {
-            throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.toString());
+            throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.getText());
         }
+    }
+
+    private boolean checkISBN(Book toCheck) {
+        List<Book> books = getAllBooks();
+        for (Book book : books) {
+            if (book.getId()!= toCheck.getId() && book.getISBN().equals(toCheck.getISBN())) {
+                return false;
+            }
+        }
+        return true;
     }
 }

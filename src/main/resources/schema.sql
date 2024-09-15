@@ -1,0 +1,9 @@
+
+CREATE TABLE IF NOT EXISTS TBL_BOOK (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          title VARCHAR(250) NOT NULL,
+          author VARCHAR(250) NOT NULL,
+          publication_year DATE DEFAULT NULL,
+          genre VARCHAR(250) NOT NULL,
+          ISBN VARCHAR(250) NOT NULL UNIQUE
+);

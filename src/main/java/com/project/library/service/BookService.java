@@ -13,9 +13,9 @@ public interface BookService {
 
     Book getBookByTitle(String title);
 
-    Book getBookByGenre(String genre);
+    List<Book> getBookByGenre(String genre);
 
-    Book getBookByAuthor(String author);
+    List<Book> getBookByAuthor(String author);
 
     List<Book> getBooksBySearch(String author, String title, String genre);
 

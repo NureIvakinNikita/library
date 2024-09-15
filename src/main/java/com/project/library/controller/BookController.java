@@ -2,7 +2,9 @@ package com.project.library.controller;
 
 import com.project.library.model.entity.Book;
 import com.project.library.service.BookService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +27,7 @@ public class BookController {
     }
 
     @GetMapping("/by-author")
-    public Book getBookByAuthor(
+    public List<Book> getBookByAuthor(
             @RequestParam(value = "author") String author) {
         return bookService.getBookByAuthor(author);
     }
@@ -37,7 +39,7 @@ public class BookController {
     }
 
     @GetMapping("/by-genre")
-    public Book getBookByGenre(
+    public List<Book> getBookByGenre(
             @RequestParam(value = "genre") String genre) {
         return bookService.getBookByGenre(genre);
     }
@@ -51,12 +53,12 @@ public class BookController {
     }
 
     @PostMapping
-    public Book addBrook(@RequestBody Book book) {
+    public Book addBrook(@RequestBody @Valid Book book) {
         return bookService.addBook(book);
     }
 
     @PutMapping
-    public Book updateBook(@RequestBody Book book) {
+    public Book updateBook(@RequestBody @Valid Book book) {
         return bookService.updateBook(book);
     }
 
