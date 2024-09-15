@@ -1,6 +1,10 @@
 package com.project.library.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -17,15 +21,27 @@ import static java.util.UUID.randomUUID;
 @NoArgsConstructor
 public class Book {
 
-    //Додати валідацію та ексепшини
+    //Додати ексепшини
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @NotNull(message = "Title must not be null.")
+    @NotEmpty(message = "Title must not be empty.")
     private String title;
+
+    @NotNull(message = "Author must not be null.")
+    @NotEmpty(message = "Author must not be empty.")
     private String author;
+
+    @PastOrPresent(message = "The year of publication cannot be greater than the current year.")
     private LocalDate publicationYear;
+
+    //genre must not be null.
     private String genre;
+
     @Column(unique = true)
+    @Pattern(regexp = ".{13}", message = "ISBN must consist of exactly 13 characters")
     private String ISBN;
 
     public void setId(long id) {
