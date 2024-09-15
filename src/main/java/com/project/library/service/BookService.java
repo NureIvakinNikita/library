@@ -1,10 +1,8 @@
 package com.project.library.service;
 
 import com.project.library.model.entity.Book;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 public interface BookService {
@@ -13,7 +11,13 @@ public interface BookService {
 
     Book getBookById(long id);
 
+    Book getBookByTitle(String title);
+
+    Book getBookByGenre(String genre);
+
     Book getBookByAuthor(String author);
+
+    List<Book> getBooksBySearch(String author, String title, String genre);
 
     Book addBook(Book newBook);
 

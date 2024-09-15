@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -40,6 +41,41 @@ public class BookServiceImpl implements BookService {
         } else {
             throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.toString());
         }
+    }
+
+    @Override
+    public Book getBookByTitle(String title) {
+        Optional<Book> optionalBook = bookRepository.getBookByTitle(title);
+        if (optionalBook.isPresent()) {
+            return optionalBook.get();
+        } else {
+            throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.toString());
+        }
+    }
+
+    @Override
+    public Book getBookByGenre(String genre) {
+        Optional<Book> optionalBook = bookRepository.getBookByGenre(genre);
+        if (optionalBook.isPresent()) {
+            return optionalBook.get();
+        } else {
+            throw new BookNotFoundException(ExceptionMessages.BOOK_NOT_FOUND.toString());
+        }
+    }
+
+    @Override
+    public List<Book> getBooksBySearch(String author, String title, String genre) {
+        final String finalAuthor = (author != null && author.isEmpty()) ? "Unknown" : author;
+        final String finalTitle = (title != null && title.isEmpty()) ? "Unknown" : title;
+        final String finalGenre = (genre != null && genre.isEmpty()) ? "Unknown" : genre;
+
+        List<Book> allBooks = bookRepository.findAll();
+
+        return allBooks.stream()
+                .filter(book -> (finalAuthor == null || finalAuthor.equals(book.getAuthor())) &&
+                        (finalTitle == null || finalTitle.equals(book.getTitle())) &&
+                        (finalGenre == null || finalGenre.equals(book.getGenre())))
+                .collect(Collectors.toList());
     }
 
     @Override

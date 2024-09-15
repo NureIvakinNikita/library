@@ -37,16 +37,15 @@ public class Book {
     @PastOrPresent(message = "The year of publication cannot be greater than the current year.")
     private LocalDate publicationYear;
 
-    //genre must not be null.
+    @NotNull(message = "Genre must not be null.")
+    @NotEmpty(message = "Genre must not be empty.")
     private String genre;
 
     @Column(unique = true)
+    @NotNull(message = "ISBN must not be null.")
+    @NotEmpty(message = "ISBN must not be empty.")
     @Pattern(regexp = ".{13}", message = "ISBN must consist of exactly 13 characters")
     private String ISBN;
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public void setTitle(String title) {
         if (title == null || title.isEmpty()) {

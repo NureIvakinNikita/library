@@ -13,6 +13,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     Optional<Book> getBookByAuthor(String author);
 
+    Optional<Book> getBookByTitle(String title);
+
+    Optional<Book> getBookByGenre(String genre);
+
     void deleteBookById(long id);
 
 }

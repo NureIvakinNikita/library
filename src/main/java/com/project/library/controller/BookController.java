@@ -1,26 +1,67 @@
 package com.project.library.controller;
 
+import com.project.library.model.entity.Book;
+import com.project.library.service.BookService;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/books")
 @AllArgsConstructor
 public class BookController {
-    //GET Отримання списку книг: метод GET для отримання всіх книг.
 
-    //Створення книги: метод POST для додавання нової книги.
+    private BookService bookService;
 
-    //Отримання книги за ID: метод GET для отримання конкретної
-    //книги за її ID.
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookService.getAllBooks();
+    }
 
-    //Оновлення книги: метод PUT для оновлення інформації про
-    //книгу.
+    @GetMapping("/{id}")
+    public Book getBookById(@PathVariable("id") long id) {
+        return bookService.getBookById(id);
+    }
 
-    //Видалення книги: метод DELETE для видалення книги за її ID.
+    @GetMapping("/by-author")
+    public Book getBookByAuthor(
+            @RequestParam(value = "author") String author) {
+        return bookService.getBookByAuthor(author);
+    }
 
-    //Додайте можливість пошуку книг за автором, назвою або жанром (метод
-    //GET з параметрами пошуку).
+    @GetMapping("/by-title")
+    public Book getBookByTitle(
+            @RequestParam(value = "title") String title) {
+        return bookService.getBookByTitle(title);
+    }
+
+    @GetMapping("/by-genre")
+    public Book getBookByGenre(
+            @RequestParam(value = "genre") String genre) {
+        return bookService.getBookByGenre(genre);
+    }
+
+    @GetMapping("/search")
+    public List<Book> searchBooks(
+            @RequestParam(value = "author", required = false) String author,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "genre", required = false) String genre) {
+        return bookService.getBooksBySearch(author, title, genre);
+    }
+
+    @PostMapping
+    public Book addBrook(@RequestBody Book book) {
+        return bookService.addBook(book);
+    }
+
+    @PutMapping
+    public Book updateBook(@RequestBody Book book) {
+        return bookService.updateBook(book);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteBook(@PathVariable("id") long id) {
+        bookService.deleteBookById(id);
+    }
 }
