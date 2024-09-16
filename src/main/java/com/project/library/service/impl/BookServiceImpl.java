@@ -130,7 +130,7 @@ public class BookServiceImpl implements BookService {
     public void deleteBookById(long id) {
         if (bookRepository.existsById(id)) {
             try {
-                bookRepository.deleteById(id);
+                bookRepository.deleteBookById(id);
             } catch (Exception e) {
                 throw new BookDeleteException(BOOK_DELETE_EXCEPTION.getText() + "\n" + e.getMessage());
             }
