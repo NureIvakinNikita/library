@@ -1,23 +1,25 @@
 package com.project.library.service;
 
 import com.project.library.model.entity.Book;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 
 public interface BookService {
 
-    List<Book> getAllBooks();
+    Page<Book> getAllBooks(Pageable pageable);
 
     Book getBookById(long id);
 
     Book getBookByTitle(String title);
 
-    List<Book> getBookByGenre(String genre);
+    Page<Book> getBookByGenre(String genre, Pageable pageable);
 
-    List<Book> getBookByAuthor(String author);
+    Page<Book> getBookByAuthor(String author, Pageable pageable);
 
-    List<Book> getBooksBySearch(String author, String title, String genre);
+    Page<Book> getBooksBySearch(String author, String title, String genre, Pageable pageable);
 
     Book addBook(Book newBook);
 

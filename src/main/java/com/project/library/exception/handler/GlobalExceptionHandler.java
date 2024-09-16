@@ -1,8 +1,7 @@
 package com.project.library.exception.handler;
 
 
-import com.project.library.exception.BookArgumentsViolationException;
-import com.project.library.exception.BookNotFoundException;
+import com.project.library.exception.*;
 import com.project.library.model.dto.ValidationExceptionResponse;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +27,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BookArgumentsViolationException.class)
     public ResponseEntity<String> handleBookArgumentsViolationException(BookArgumentsViolationException ex) {
         return new ResponseEntity<>(ex.getMessage().toString(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BookUpdateException.class)
+    public ResponseEntity<String> handleBookUpdateException(BookUpdateException ex) {
+        return new ResponseEntity<>(ex.getMessage().toString(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BookAddException.class)
+    public ResponseEntity<String> handleBookAddException(BookAddException ex) {
+        return new ResponseEntity<>(ex.getMessage().toString(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BookDeleteException.class)
+    public ResponseEntity<String> handleBookDeleteException(BookDeleteException ex) {
+        return new ResponseEntity<>(ex.getMessage().toString(), HttpStatus.BAD_REQUEST);
     }
 
     @Override
